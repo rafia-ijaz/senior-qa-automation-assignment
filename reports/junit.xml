@@ -1,0 +1,10 @@
+<testsuites id="" name="" tests="2" failures="0" skipped="0" errors="0" time="38.810669000000004">
+<testsuite name="place-order.spec.ts" timestamp="2025-12-27T15:34:20.834Z" hostname="chromium" tests="1" failures="0" skipped="0" time="27.056" errors="0">
+<testcase name="Place order with multiple products (price calculation checks)" classname="place-order.spec.ts" time="27.056">
+</testcase>
+</testsuite>
+<testsuite name="place-order.spec.ts" timestamp="2025-12-27T15:34:20.834Z" hostname="firefox" tests="1" failures="0" skipped="0" time="31.009" errors="0">
+<testcase name="Place order with multiple products (price calculation checks)" classname="place-order.spec.ts" time="31.009">
+</testcase>
+</testsuite>
+</testsuites>

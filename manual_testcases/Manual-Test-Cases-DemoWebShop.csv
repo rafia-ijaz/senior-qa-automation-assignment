@@ -1,0 +1,65 @@
+Test Case ID,Title,Module,Priority,Severity,Preconditions,Test Data,Steps,Expected Result,Postconditions/Notes
+DWS-TC-001,Register new user account (valid),Authentication,High,Critical,"User is on https://demowebshop.tricentis.com and not logged in","Email: unique (e.g., qa.user+<timestamp>@example.com); Password: P@ssw0rd!23; First/Last name: Test/User","1) Click 'Register' in the header.
+2) Select Gender (optional).
+3) Enter First name and Last name.
+4) Enter unique Email.
+5) Enter Password and Confirm password.
+6) Click 'Register'.","1) Registration succeeds.
+2) Success message is shown (e.g., 'Your registration completed').
+3) Header shows 'Log out' and account email.
+4) No validation errors are displayed.","Use a timestamped email to avoid conflicts. Verify password policy if any validation appears."
+DWS-TC-002,Login with valid credentials + logout,Authentication,High,Critical,"A user account already exists (can be created via DWS-TC-001). User is on the site home page.","Email: existing user; Password: matching password","1) Click 'Log in'.
+2) Enter Email and Password.
+3) Click 'Log in'.
+4) Verify user is logged in.
+5) Click 'Log out'.","1) Login succeeds and user is redirected to home (or previous page).
+2) Header shows 'Log out' and account link.
+3) After logout, header shows 'Log in' and 'Register'.
+4) No protected pages remain accessible as logged-in without re-auth.","If 'Remember me' exists, test it separately."
+DWS-TC-003,Search product and add to cart (quantity update + subtotal math),Catalog/Cart,High,High,"User is on the home page; cart is empty or note existing cart items.","Product A: 'Build your own cheap computer' (qty=2)
+Product B: 'Blue Jeans' (qty=1)","1) Use the search box to search Product A.
+2) Open Product A from results.
+3) Click 'Add to cart' and verify notification.
+4) Search Product B.
+5) Open Product B and add to cart.
+6) Open 'Shopping cart'.
+7) Update quantities: A=2, B=1.
+8) Click 'Update shopping cart'.
+9) Capture Unit Price and Subtotal for each line.
+10) Capture Cart Sub-Total (summary).","1) Both products appear in cart.
+2) Quantity updates persist after update.
+3) For each line: Subtotal = Unit Price × Quantity.
+4) Cart Sub-Total = sum of all line subtotals.
+5) No unexpected price changes after update.","This mirrors the key calculation checks used in the automation."
+DWS-TC-004,Guest checkout end-to-end (shipping/payment + confirm order),Checkout/Order,High,Critical,"Cart has at least 2 items (can reuse DWS-TC-003). User is not logged in. Terms-of-service checkbox is visible.","Billing address:
+First/Last: Test User
+Email: unique
+Country: United States
+State: Alabama (if required)
+City: Birmingham
+Address1: 123 Test Street
+ZIP: 35203
+Phone: 5551234567
+Shipping method: Ground
+Payment method: Cash On Delivery","1) From Shopping cart, tick 'I agree with the terms of service'.
+2) Click 'Checkout'.
+3) If prompted, choose 'Checkout as Guest'.
+4) Fill Billing Address fields and Continue.
+5) If 'Ship to the same address' option exists, keep enabled and Continue.
+6) Select Shipping method 'Ground' and Continue.
+7) Select Payment method 'Cash On Delivery' and Continue.
+8) On payment information, click Continue.
+9) On Confirm Order page, verify totals (Subtotal/Shipping/Tax/Total) are present.
+10) Click 'Confirm'.","1) Checkout steps complete without errors.
+2) Order confirmation message appears (e.g., 'Your order has been successfully processed!').
+3) Order is created and user can continue shopping.
+4) Totals are consistent (Total = Subtotal + Shipping + Tax, where displayed).","If any step is skipped/auto-filled due to existing session, note it and re-run in a fresh session."
+DWS-TC-005,Apply and remove discount/gift card code (negative + recovery),Promotions/Cart,Medium,Medium,"User has at least 1 item in cart; user is on Shopping cart page.","Coupon code: INVALIDCODE123 (or any obviously invalid code)","1) In Shopping cart, locate the discount code / coupon box.
+2) Enter invalid coupon code.
+3) Click 'Apply coupon' (or equivalent).
+4) Observe message and totals.
+5) Clear the coupon code input.
+6) Proceed to checkout is still possible (terms accepted) to ensure cart is not blocked.","1) A clear error message is shown for invalid code.
+2) No discount is applied.
+3) Cart totals remain unchanged.
+4) User can continue shopping/checkout normally after the error.","If the site uses 'gift card' instead of coupon, adapt steps to that input; goal is validation + non-blocking behavior."

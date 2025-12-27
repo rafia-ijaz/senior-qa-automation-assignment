@@ -1,0 +1,222 @@
+{
+  "info": {
+    "_postman_id": "d7d3f2b9-4f71-4b89-9c59-9d5fda6b7c6a",
+    "name": "Senior QA Assignment - Petstore API",
+    "description": "Postman collection for Swagger Petstore /v2 pet APIs (POST /pet, GET /pet/{petId}). Includes positive + negative scenarios.",
+    "schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
+  },
+  "variable": [
+    { "key": "baseUrl", "value": "https://petstore.swagger.io/v2" },
+    { "key": "petId", "value": "" },
+    { "key": "missingPetId", "value": "999999999999" },
+    { "key": "invalidPetId", "value": "abc" }
+  ],
+  "item": [
+    {
+      "name": "01 - POST /pet - Create pet (valid)",
+      "event": [
+        {
+          "listen": "prerequest",
+          "script": {
+            "type": "text/javascript",
+            "exec": [
+              "// Generate a unique id per run (int64-safe in JS number range)",
+              "const id = Date.now();",
+              "pm.collectionVariables.set('petId', String(id));",
+              "",
+              "const petName = `qa-pet-${id}`;",
+              "pm.collectionVariables.set('petName', petName);",
+              "",
+              "const payload = {",
+              "  id: id,",
+              "  category: { id: 1, name: 'qa' },",
+              "  name: petName,",
+              "  photoUrls: ['https://example.com/pet.png'],",
+              "  tags: [{ id: 1, name: 'assignment' }],",
+              "  status: 'available'",
+              "};",
+              "pm.collectionVariables.set('petPayload', JSON.stringify(payload));"
+            ]
+          }
+        },
+        {
+          "listen": "test",
+          "script": {
+            "type": "text/javascript",
+            "exec": [
+              "pm.test('Status code is 200', function () {",
+              "  pm.response.to.have.status(200);",
+              "});",
+              "",
+              "pm.test('Response is JSON', function () {",
+              "  pm.response.to.be.json;",
+              "});",
+              "",
+              "const json = pm.response.json();",
+              "pm.test('Response has id + name + status', function () {",
+              "  pm.expect(json).to.have.property('id');",
+              "  pm.expect(json).to.have.property('name');",
+              "  pm.expect(json).to.have.property('status');",
+              "});",
+              "",
+              "pm.test('Created pet id matches requested id', function () {",
+              "  const requested = Number(pm.collectionVariables.get('petId'));",
+              "  pm.expect(json.id).to.eql(requested);",
+              "});",
+              "",
+              "pm.test('Created pet name matches requested name', function () {",
+              "  const requestedName = pm.collectionVariables.get('petName');",
+              "  pm.expect(json.name).to.eql(requestedName);",
+              "});",
+              "",
+              "// Persist id for follow-up GET (in case API overrides id)",
+              "pm.collectionVariables.set('petId', String(json.id));"
+            ]
+          }
+        }
+      ],
+      "request": {
+        "method": "POST",
+        "header": [
+          { "key": "Content-Type", "value": "application/json" },
+          { "key": "Accept", "value": "application/json" }
+        ],
+        "url": {
+          "raw": "{{baseUrl}}/pet",
+          "host": ["{{baseUrl}}"],
+          "path": ["pet"]
+        },
+        "body": {
+          "mode": "raw",
+          "raw": "{{petPayload}}",
+          "options": { "raw": { "language": "json" } }
+        },
+        "description": "Creates a new pet and stores petId as a collection variable."
+      }
+    },
+    {
+      "name": "02 - GET /pet/{petId} - Fetch created pet (200)",
+      "event": [
+        {
+          "listen": "test",
+          "script": {
+            "type": "text/javascript",
+            "exec": [
+              "pm.test('Status code is 200', function () {",
+              "  pm.response.to.have.status(200);",
+              "});",
+              "",
+              "const json = pm.response.json();",
+              "pm.test('Fetched pet id matches stored petId', function () {",
+              "  const stored = Number(pm.collectionVariables.get('petId'));",
+              "  pm.expect(json.id).to.eql(stored);",
+              "});",
+              "",
+              "pm.test('Fetched pet has required fields', function () {",
+              "  pm.expect(json).to.have.property('name');",
+              "  pm.expect(json).to.have.property('photoUrls');",
+              "  pm.expect(json).to.have.property('status');",
+              "});"
+            ]
+          }
+        }
+      ],
+      "request": {
+        "method": "GET",
+        "header": [{ "key": "Accept", "value": "application/json" }],
+        "url": {
+          "raw": "{{baseUrl}}/pet/{{petId}}",
+          "host": ["{{baseUrl}}"],
+          "path": ["pet", "{{petId}}"]
+        },
+        "description": "Fetches the pet created in step 01 by petId."
+      }
+    },
+    {
+      "name": "03 - POST /pet - Invalid input (expect 400/405)",
+      "event": [
+        {
+          "listen": "test",
+          "script": {
+            "type": "text/javascript",
+            "exec": [
+              "pm.test('Status code indicates invalid input', function () {",
+              "  pm.expect(pm.response.code).to.be.oneOf([400, 405]);",
+              "});"
+            ]
+          }
+        }
+      ],
+      "request": {
+        "method": "POST",
+        "header": [
+          { "key": "Content-Type", "value": "application/json" },
+          { "key": "Accept", "value": "application/json" }
+        ],
+        "url": {
+          "raw": "{{baseUrl}}/pet",
+          "host": ["{{baseUrl}}"],
+          "path": ["pet"]
+        },
+        "body": {
+          "mode": "raw",
+          "raw": "{}",
+          "options": { "raw": { "language": "json" } }
+        },
+        "description": "Sends an invalid/empty payload to validate error handling (Swagger documents 405 Invalid input)."
+      }
+    },
+    {
+      "name": "04 - GET /pet/{petId} - Invalid ID supplied (400)",
+      "event": [
+        {
+          "listen": "test",
+          "script": {
+            "type": "text/javascript",
+            "exec": [
+              "pm.test('Status code is 400', function () {",
+              "  pm.response.to.have.status(400);",
+              "});"
+            ]
+          }
+        }
+      ],
+      "request": {
+        "method": "GET",
+        "header": [{ "key": "Accept", "value": "application/json" }],
+        "url": {
+          "raw": "{{baseUrl}}/pet/{{invalidPetId}}",
+          "host": ["{{baseUrl}}"],
+          "path": ["pet", "{{invalidPetId}}"]
+        },
+        "description": "Uses a non-numeric petId to trigger the documented 400 Invalid ID supplied scenario."
+      }
+    },
+    {
+      "name": "05 - GET /pet/{petId} - Pet not found (404)",
+      "event": [
+        {
+          "listen": "test",
+          "script": {
+            "type": "text/javascript",
+            "exec": [
+              "pm.test('Status code is 404', function () {",
+              "  pm.response.to.have.status(404);",
+              "});"
+            ]
+          }
+        }
+      ],
+      "request": {
+        "method": "GET",
+        "header": [{ "key": "Accept", "value": "application/json" }],
+        "url": {
+          "raw": "{{baseUrl}}/pet/{{missingPetId}}",
+          "host": ["{{baseUrl}}"],
+          "path": ["pet", "{{missingPetId}}"]
+        },
+        "description": "Uses a very large id expected not to exist to trigger 404 Pet not found."
+      }
+    }
+  ]
+}

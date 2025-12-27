@@ -1,0 +1,31 @@
+{
+  "billing": {
+    "firstName": "Test",
+    "lastName": "User",
+    "emailPrefix": "test.user+demowebshop",
+    "company": "",
+    "country": "United States",
+    "state": "Alabama",
+    "city": "Birmingham",
+    "address1": "123 Test Street",
+    "address2": "",
+    "zip": "35203",
+    "phone": "5551234567",
+    "fax": ""
+  },
+  "shipping": {
+    "sameAsBilling": true
+  },
+  "products": [
+    {
+      "name": "Build your own cheap computer",
+      "quantity": 2
+    },
+    {
+      "name": "Blue Jeans",
+      "quantity": 1
+    }
+  ],
+  "shippingMethodContains": "Ground",
+  "paymentMethodContains": "Cash On Delivery"
+}
