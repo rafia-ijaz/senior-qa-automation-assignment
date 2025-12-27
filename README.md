@@ -73,11 +73,11 @@ npm run test:ui
 
 ## Bonus task (AI)
 
-See [docs/AI-Acceleration.md](docs/AI-Acceleration.md) for a concise write-up of how AI tools can accelerate delivery for this project.
+See [bonus_task_AI/AI-Usage.md](bonus_task_AI/AI-Usage.md) for a concise write-up of how AI tools can accelerate delivery for this project.
 
 ## Bonus (Performance)
 
-Performance test design (no code): [docs/Performance-Test-Approach.md](docs/Performance-Test-Approach.md)
+Performance test design (no code): [additional_task_perf/Performance-Test-Approach.md](additional_task_perf/Performance-Test-Approach.md)
 
 ## API Automation (Postman)
 
